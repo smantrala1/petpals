@@ -1,34 +1,56 @@
 function buildPlot() {
-    /* data route */
-  var url = "/api/pals";
-  d3.json(url).then(function(response) {
+  /* data route */
+var url = "/api/pals-summary";
+d3.json(url).then(function(response) {
 
-    console.log(response);
+  console.log(response);
 
-    var data = response;
+  var pet_name = response.map(p => p.name);
+  var pet_type = response.map(p => p.type);
+  var pet_count = response.map(p => p.count);
 
-    var layout = {
-      scope: "usa",
-      title: "Pet Pals",
-      showlegend: false,
-      height: 600,
-            // width: 980,
-      geo: {
-        scope: "usa",
-        projection: {
-          type: "albers usa"
-        },
-        showland: true,
-        landcolor: "rgb(217, 217, 217)",
-        subunitwidth: 1,
-        countrywidth: 1,
-        subunitcolor: "rgb(255,255,255)",
-        countrycolor: "rgb(255,255,255)"
-      }
-    };
+  var trace = [{
+    'x': pet_type,
+    'y': pet_count,
+    'type': 'bar'
+  }];
 
-    Plotly.newPlot("plot", data, layout);
-  });
+  var layout = {
+    title: "Pet Pals",
+    xaxis: {
+      title: "Pet Type"
+    },
+    yaxis: {
+      title: "Number of Pals"
+    }
+  };
+
+  Plotly.newPlot("plot", trace, layout);
+});
+}
+
+function buildTable() {
+/* data route */
+var url = "/api/pals";
+d3.json(url).then(function(response) {
+
+  var pet_name = response.map(p => p.name);
+  var pet_type = response.map(p => p.type);
+  var pet_age = response.map(p => p.age);
+
+  var table = d3.select("#pets-table");
+  var tbody = table.select("tbody");
+  console.log(tbody);
+  var trow;
+  for (var i = 0; i < pet_name.length; i++) {
+    trow = tbody.append("tr");
+    trow.append("td").text(pet_name[i]);
+    trow.append("td").text(pet_type[i]);
+    trow.append("td").text(pet_age[i]);
+    }
+});
 }
 
 buildPlot();
+
+buildTable();
